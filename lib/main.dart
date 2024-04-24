@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presensi_app/screen/attandance_recap_screen.dart';
 import 'package:presensi_app/screen/dashboard_screen.dart';
 import 'package:presensi_app/screen/login_screen.dart';
 import 'package:presensi_app/screen/splash_screen.dart';
@@ -19,7 +20,7 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const DashboardScreen(),
+      home: const AttandanceRecapScreen(),
     );
   }
 }

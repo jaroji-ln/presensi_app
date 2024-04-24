@@ -119,7 +119,7 @@ class DashboardScreen extends StatelessWidget{
                       ),
                       color: Colors.white, 
                       child: Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -127,9 +127,9 @@ class DashboardScreen extends StatelessWidget{
                               Container(
                                 width: 48,
                                 height: 48,
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Color.fromARGB(35, 48, 134, 254),
+                                  color: const Color.fromARGB(35, 48, 134, 254),
                                   borderRadius: BorderRadius.circular(10)
                                 ),
                                 child: SvgPicture.asset('assets/svgs/login_outlined.svg'),
@@ -143,7 +143,7 @@ class DashboardScreen extends StatelessWidget{
                                 ),
                                 textAlign: TextAlign.left,)
                             ],),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text(
                               '07:00',
                               style: GoogleFonts.lexend(
@@ -162,16 +162,16 @@ class DashboardScreen extends StatelessWidget{
                       ),
                     ),
                   ),
-                  SizedBox(width: 10,),
+                  const SizedBox(width: 10,),
                   Expanded(
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Color.fromARGB(255, 219, 226, 228), width: 1.0), // Gray border for the Card
+                        side: const BorderSide(color: Color.fromARGB(255, 219, 226, 228), width: 1.0), // Gray border for the Card
                         borderRadius: BorderRadius.circular(10.0), // Rounded corners
                       ),
                       color: Colors.white, // White background color for the Card
                       child: Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -179,9 +179,9 @@ class DashboardScreen extends StatelessWidget{
                               Container(
                                 width: 48,
                                 height: 48,
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Color.fromARGB(35, 48, 134, 254),
+                                  color: const Color.fromARGB(35, 48, 134, 254),
                                   borderRadius: BorderRadius.circular(10)
                                 ),
                                 child: SvgPicture.asset('assets/svgs/logout_outlined.svg',),
@@ -219,7 +219,15 @@ class DashboardScreen extends StatelessWidget{
               ),
               const SizedBox(height: 10,),
               ElevatedButton(
-                onPressed: (){},
+                onPressed: (){
+                  showModalBottomSheet(
+                    context: context, 
+                    isScrollControlled: true,
+                    builder: (context){
+                      return attandanceScreen();
+                    },
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50), // width and height
                   backgroundColor: const Color(0xFF12A3DA),
@@ -248,10 +256,263 @@ class DashboardScreen extends StatelessWidget{
                 ),
               ), 
               const SizedBox(height: 10,),
+              Row(
+                children: [
+                  Expanded(
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/bg_izin.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Izin Absen',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10,),
+                              Text(
+                                'Isi form untuk mengajukan izin absensi',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xff313638),
+                                  minimumSize: const Size(double.infinity, 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  )
+                                ),
+                                child: Text(
+                                  'Ajukan izin',
+                                  style: GoogleFonts.manrope(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  Expanded(
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/bg_cuti.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Izin Cuti',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10,),
+                              Text(
+                                'Isi form untuk mengajukan cuti',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+                              ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xff9B59B6),
+                                  minimumSize: const Size(double.infinity, 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  )
+                                ),
+                                child: Text(
+                                  'Ajukan Cuti',
+                                  style: GoogleFonts.manrope(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         )
       ),
+    );
+  }
+  
+  Widget attandanceScreen() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Presensi Masuk',
+                style: GoogleFonts.manrope(
+                  fontSize: 24,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                )
+              ),
+              const SizedBox(height: 10,),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_month,
+                    color: Color(0xffE74C3C),
+                    size: 32, 
+                  ),
+                  const SizedBox(width: 10,),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tanggal Masuk',
+                        style: GoogleFonts.manrope(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color:const Color(0xff111111),
+                        )
+                      ),
+                      Text(
+                        'Selasa, 23 Agustus 2023',
+                        style: GoogleFonts.manrope(
+                          fontSize: 14,
+                          color:const Color(0xff707070),
+                        )
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              const SizedBox(height: 10,),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.av_timer_outlined,
+                    color: Color(0xffE74C3C),
+                    size: 32, 
+                  ),
+                  const SizedBox(width: 10,),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Jam Masuk',
+                        style: GoogleFonts.manrope(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color:const Color(0xff111111),
+                        )
+                      ),
+                      Text(
+                        '07:30:23',
+                        style: GoogleFonts.manrope(
+                          fontSize: 14,
+                          color:const Color(0xff707070),
+                        )
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              const SizedBox(height: 40,),
+              Text(
+                'Foto selfie di area kantor',
+                style: GoogleFonts.manrope(
+                  fontSize: 16,
+                  color: const Color (0xff707070),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: Container(
+                  height: 200, // Set your desired height
+                  alignment: Alignment.center,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Ambil Gambar'),
+                    onPressed: () {
+                      // Implement your image picking logic
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // Implement your check-in logic
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(
+                  'Hadir',
+                  style: GoogleFonts.manrope(
+                    fontSize:20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+      ),
+      ]
     );
   }
 }

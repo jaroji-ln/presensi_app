@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:presensi_app/screen/dashboard_screen.dart';
+import 'package:presensi_app/screen/login_screen.dart';
 
 class SplashScreen extends StatelessWidget{
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context){
+
+    Future.delayed(const Duration(seconds: 3)).then((value) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+          (route) => false);
+    });
     return Scaffold(
       body: Center(
         child: Column(

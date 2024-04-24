@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:presensi_app/screen/dashboard_screen.dart';
 
 
 class LoginScreen extends StatelessWidget{
@@ -110,6 +111,11 @@ class LoginScreen extends StatelessWidget{
                   ElevatedButton(
                     onPressed: () {
                       // Login Tap
+                      Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const DashboardScreen(),
+                        ),
+                        (route) => false);
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50), // width and height

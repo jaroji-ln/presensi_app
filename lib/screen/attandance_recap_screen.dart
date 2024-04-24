@@ -29,7 +29,7 @@ class _AttandanceRecapSreenApp extends State<AttandanceRecapScreen>{
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: (){
-
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios)
         ),

@@ -2,9 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:presensi_app/screen/attandance_recap_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardScreen extends StatelessWidget{
+
+class DashboardScreen extends StatefulWidget{
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+
+  late String token;
+  late String name;
+  late String dept;
+  late String imgUrl;
+
+  Future<void> getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt')?? "";
+    String? name = prefs.getString('name')?? "";
+    String? dept = prefs.getString('dept')?? "";
+    String? imgUrl = prefs.getString('imgProfil')?? "not found";
+
+    setState(() {
+      this.token = token;
+      this.name = name;
+      this.dept = dept;
+      this.imgUrl = imgUrl;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
 
   @override
   Widget build(BuildContext context){
@@ -24,14 +58,20 @@ class DashboardScreen extends StatelessWidget{
                 children: [
                   Row(
                     children : [
-                      Image.asset(
-                        'assets/images/user_profile.png',
-                        height: 84,),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.network(
+                          imgUrl,
+                          height: 84,
+                          fit: BoxFit.cover
+                        )
+                      ),
+                      const SizedBox(width:10),
                       Column( 
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Nama Pegawai',
+                            name,
                             textAlign: TextAlign.left,
                             style: GoogleFonts.manrope(
                               fontSize: 20,
@@ -40,7 +80,7 @@ class DashboardScreen extends StatelessWidget{
                             ),
                           ),
                           Text(
-                            'Nama Departemen',
+                            dept,
                             style: GoogleFonts.manrope(
                               fontSize: 16,
                               color: const Color(0xFF263238),
@@ -390,7 +430,7 @@ class DashboardScreen extends StatelessWidget{
       ),
     );
   }
-  
+
   Widget attandanceScreen() {
     return Column(
       mainAxisSize: MainAxisSize.min,

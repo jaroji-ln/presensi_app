@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:presensi_app/model/presensi.dart';
 import 'package:presensi_app/screen/attandance_recap_screen.dart';
+import 'package:presensi_app/utils/mix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 class DashboardScreen extends StatefulWidget{
@@ -14,24 +18,52 @@ class DashboardScreen extends StatefulWidget{
 
 class _DashboardScreenState extends State<DashboardScreen> {
 
-  late String token;
-  late String name;
-  late String dept;
-  late String imgUrl;
+  String nik="", token = "", name ="", dept ="", imgUrl="";
+  late Future<Presensi> futurePresensi;
 
+  //get user data
   Future<void> getUserData() async {
     final prefs = await SharedPreferences.getInstance();
+    String? nik = prefs.getString('nik') ?? "";
     String? token = prefs.getString('jwt')?? "";
     String? name = prefs.getString('name')?? "";
     String? dept = prefs.getString('dept')?? "";
     String? imgUrl = prefs.getString('imgProfil')?? "not found";
-
+    
     setState(() {
+      this.nik = nik;
       this.token = token;
       this.name = name;
       this.dept = dept;
       this.imgUrl = imgUrl;
     });
+  }
+
+  //get presence info
+  Future<Presensi> fetchPresensi(String nik, String tanggal) async {
+    String url = 'https://presensi.spilme.id/presence?nik=$nik&tanggal=$tanggal';
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token'
+      }
+    );
+  
+    if (response.statusCode == 200) {
+      return Presensi.fromJson(jsonDecode(response.body));
+    } else {
+      //jika data tidak tersedia, buat data default
+      return Presensi(
+        id: 0, 
+        nik: this.nik,
+        tanggal: getTodayDate(),
+        jamMasuk: "--:--",
+        jamKeluar: '--:--',
+        lokasiMasuk: '-',
+        lokasiKeluar: '-',
+        status: '-',
+      );
+    }
   }
 
   @override
@@ -154,113 +186,127 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 10,),
-              Row(
-                children: [
-                  Expanded(
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Color.fromARGB(255, 219, 226, 228), width: 1.0), // Gray border for the Card
-                        borderRadius: BorderRadius.circular(10.0), // Rounded corners
-                      ),
-                      color: Colors.white, 
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(children: [
-                              Container(
-                                width: 48,
-                                height: 48,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(35, 48, 134, 254),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                                child: SvgPicture.asset('assets/svgs/login_outlined.svg'),
+              FutureBuilder<Presensi>(
+                future:fetchPresensi(nik, getTodayDate()),
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting){
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError){
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData){
+                    final data = snapshot.data;
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(color: Color.fromARGB(255, 219, 226, 228), width: 1.0), // Gray border for the Card
+                              borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                            ),
+                            color: Colors.white, 
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(children: [
+                                    Container(
+                                      width: 48,
+                                      height: 48,
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(35, 48, 134, 254),
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: SvgPicture.asset('assets/svgs/login_outlined.svg'),
+                                    ),
+                                    const SizedBox(width: 10,),
+                                    Text(
+                                      'Masuk',
+                                      style: GoogleFonts.lexend(
+                                        fontSize: 16,
+                                        color: const Color(0xFF101317),
+                                      ),
+                                      textAlign: TextAlign.left,)
+                                  ],),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    data?.jamMasuk ?? '--:--',
+                                    style: GoogleFonts.lexend(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF101317),
+                                    ),),
+                                  Text(
+                                    getPresenceEntryStatus(data?.jamMasuk??'-'),
+                                    style: GoogleFonts.lexend(
+                                      fontSize: 16,
+                                      color:const Color(0xFF101317),
+                                    ),),
+                                ],
                               ),
-                              const SizedBox(width: 10,),
-                              Text(
-                                'Masuk',
-                                style: GoogleFonts.lexend(
-                                  fontSize: 16,
-                                  color: const Color(0xFF101317),
-                                ),
-                                textAlign: TextAlign.left,)
-                            ],),
-                            const SizedBox(height: 10),
-                            Text(
-                              '07:00',
-                              style: GoogleFonts.lexend(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF101317),
-                              ),),
-                            Text(
-                              'Tepat Waktu',
-                              style: GoogleFonts.lexend(
-                                fontSize: 16,
-                                color:const Color(0xFF101317),
-                              ),),
-                          ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10,),
-                  Expanded(
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Color.fromARGB(255, 219, 226, 228), width: 1.0), // Gray border for the Card
-                        borderRadius: BorderRadius.circular(10.0), // Rounded corners
-                      ),
-                      color: Colors.white, // White background color for the Card
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(children: [
-                              Container(
-                                width: 48,
-                                height: 48,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(35, 48, 134, 254),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                                child: SvgPicture.asset('assets/svgs/logout_outlined.svg',),
+                        const SizedBox(width: 10,),
+                        Expanded(
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(color: Color.fromARGB(255, 219, 226, 228), width: 1.0), // Gray border for the Card
+                              borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                            ),
+                            color: Colors.white, // White background color for the Card
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(children: [
+                                    Container(
+                                      width: 48,
+                                      height: 48,
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(35, 48, 134, 254),
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: SvgPicture.asset('assets/svgs/logout_outlined.svg',),
+                                    ),
+                                    const SizedBox(width: 10,),
+                                    Text(
+                                      'Keluar',
+                                      style: GoogleFonts.lexend(
+                                        fontSize: 16,
+                                        color: const Color(0xFF101317),
+                                      ),
+                                      textAlign: TextAlign.left,)
+                                  ],),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    data?.jamKeluar??'--:--',
+                                    style: GoogleFonts.lexend(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF101317),
+                                    ),),
+                                  Text(
+                                    getPresenceExitStatus(data?.jamKeluar??'-'),
+                                    style: GoogleFonts.lexend(
+                                      fontSize: 16,
+                                      color:const Color(0xFF101317),
+                                    ),),
+                                ],
                               ),
-                              const SizedBox(width: 10,),
-                              Text(
-                                'Keluar',
-                                style: GoogleFonts.lexend(
-                                  fontSize: 16,
-                                  color: const Color(0xFF101317),
-                                ),
-                                textAlign: TextAlign.left,)
-                            ],),
-                            const SizedBox(height: 10),
-                            Text(
-                              '--:--',
-                              style: GoogleFonts.lexend(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF101317),
-                              ),),
-                            Text(
-                              'Pulang',
-                              style: GoogleFonts.lexend(
-                                fontSize: 16,
-                                color:const Color(0xFF101317),
-                              ),),
-                          ],
+                            ),
+                      
+                          ),
                         ),
-                      ),
-                
-                    ),
-                  ),
-                ],
+                      ],
+                    );
+                  } else {
+                    return const Center(child: Text('No data available'));
+                  }
+                },
               ),
               const SizedBox(height: 10,),
               ElevatedButton(

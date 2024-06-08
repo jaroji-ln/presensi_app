@@ -26,12 +26,26 @@ import 'package:intl/intl.dart';
     if (jamKeluar.isEmpty) return 'Unknown';
     String jamKeluar2 = (jamKeluar == '--:--')? '00:00':jamKeluar;
     final time = DateFormat('HH:mm').parse(jamKeluar2);
-    final startTime = DateTime(time.year, time.month, time.day, 6, 0); // 06:00
-    final endTime = DateTime(time.year, time.month, time.day, 8, 0); // 08:00
+    final startTime = DateTime(time.year, time.month, time.day, 16, 30); // 06:00
+    final endTime = DateTime(time.year, time.month, time.day, 18, 0); // 08:00
 
     if (time.isAfter(startTime) && time.isBefore(endTime)) {
       return 'Tepat Waktu';
     } else {
       return 'Pulang Cepat';
     }
+  }
+
+  //Format tanggal: hari, tgl bulan tahun
+  String getToday(){
+    DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('EEEE, dd MMMM yyyy', 'id').format(now); // Format hari, tgl bulan tahun
+    return formattedDate;
+  }
+
+  //Format jam sekarang: jam:menit
+  String getTime(){
+    DateTime now = DateTime.now();
+    final String formattedTime = DateFormat('HH:mm').format(now);
+    return formattedTime;
   }
